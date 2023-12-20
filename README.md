@@ -1,6 +1,7 @@
 # composite-action-template
 
 Upon creating a repository from this template:
+- Remove the [trigger-update-from-template workflow](.github/workflows/trigger-update-from-template.yml)
 - Edit the action.yml to correspond to your new action
 - Edit the self-test workflow.
 - Edit this readme: this summary and the usage section.
