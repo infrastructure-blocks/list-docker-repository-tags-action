@@ -1,14 +1,27 @@
-# composite-action-template
+# list-docker-repository-tags-action
 
-Upon creating a repository from this template:
-- Remove the [trigger-update-from-template workflow](.github/workflows/trigger-update-from-template.yml)
-- Edit the action.yml to correspond to your new action
-- Edit the self-test workflow.
-- Edit this readme: this summary and the usage section.
+A GithubAction to list a Docker repository tags. It leverages the Docker registry API V2 to do so.
+It requires the use of an authorization token (passed as a `Bearer` token) to the specified registry and
+extracts the tags of the requested repository.
 
 ## Usage
 
-Describe usage of your action here.
+```yaml
+jobs:
+  example-with-ecr-public:
+    steps:
+      - name: Get token from ECR public
+        id: get-token
+        run: |
+          response=$(curl -L -X GET https://public.ecr.aws/token/)
+          token=$(echo ${response} | jq -e -r '.token')
+          echo "token=${token}" >> "${GITHUB_OUTPUT}"
+      - uses: infrastructure-blocks/list-docker-repository-tags@v1
+        with:
+          token: ${{ steps.get-token.outputs.token }}
+          registry: public.ecr.aws
+          repository: your/repository
+```
 
 ## Development
 

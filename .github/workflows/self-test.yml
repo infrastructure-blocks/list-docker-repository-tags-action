@@ -12,9 +12,18 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+      - name: Get token from ECR public
+        id: get-token
+        run: |
+          response=$(curl -L -X GET https://public.ecr.aws/token/)
+          token=$(echo ${response} | jq -e -r '.token')
+          echo "token=${token}" >> "${GITHUB_OUTPUT}"
       - id: composite-action
         uses: ./
         with:
-          example-input: Hello?
-      - run: |
-          echo ${{ steps.composite-action.outputs.example-output }}
+          token: ${{ steps.get-token.outputs.token }}
+          registry: public.ecr.aws
+          repository: datadog/agent
+      - name: List tags
+        run: |
+          echo "${{ steps.composite-action.outputs.tags }}"
